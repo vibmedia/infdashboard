@@ -1,5 +1,5 @@
 /**
- * Kobi API Client — Centralized service for all backend calls.
+ * VibCollab API Client — Centralized service for all backend calls.
  * Replace mock data in pages by importing from here.
  */
 

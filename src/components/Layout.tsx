@@ -28,7 +28,7 @@ export function Layout({ children }: { children: ReactNode }) {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center font-bold text-white">
               K
             </div>
-            <span className="font-bold text-lg tracking-tight">Kobi <span className="text-slate-400 font-normal text-sm">by VibMedia</span></span>
+            <span className="font-bold text-lg tracking-tight">VibCollab <span className="text-slate-400 font-normal text-sm">by VibMedia</span></span>
           </div>
           <button 
             onClick={() => setSidebarOpen(true)}

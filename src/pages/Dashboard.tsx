@@ -1,24 +1,8 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, Building2, Briefcase, Clapperboard, TrendingUp, TrendingDown, Clock, CheckCircle2, Star, MessageSquare } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-
-const pipelineData = [
-  { name: 'Imported', value: 312, color: '#94A3B8' },
-  { name: 'DM Sent', value: 180, color: '#3B82F6' },
-  { name: 'Replied', value: 95, color: '#8B5CF6' },
-  { name: 'Onboarding', value: 45, color: '#F59E0B' },
-  { name: 'Onboarded', value: 78, color: '#10B981' },
-  { name: 'Available', value: 89, color: '#06B6D4' },
-  { name: 'On Campaign', value: 48, color: '#EC4899' },
-];
-
-const tierData = [
-  { name: 'Nano', value: 340 },
-  { name: 'Micro', value: 298 },
-  { name: 'Mid', value: 145 },
-  { name: 'Macro', value: 52 },
-  { name: 'Mega', value: 12 },
-];
+import { reportsApi } from '../lib/api';
 
 const outreachData = [
   { day: 'Mon', sent: 45, replies: 8 },
@@ -38,15 +22,43 @@ const activities = [
   { id: 5, text: 'Vikram Singh upgraded to Platinum tier 💎', time: '3 hours ago', icon: Star, color: 'text-cyan-400', bg: 'bg-cyan-400/10' },
 ];
 
-const igHealthData = [
-  { name: 'Active', value: 12, color: '#10B981' },
-  { name: 'Warmup', value: 5, color: '#F59E0B' },
-  { name: 'Cooldown', value: 2, color: '#3B82F6' },
-  { name: 'Challenge', value: 1, color: '#EF4444' },
+const tierData = [
+  { name: 'Nano', value: 340 },
+  { name: 'Micro', value: 298 },
+  { name: 'Mid', value: 145 },
+  { name: 'Macro', value: 52 },
+  { name: 'Mega', value: 12 },
 ];
 
 export function Dashboard() {
   const navigate = useNavigate();
+  const [stats, setStats] = useState<any>(null);
+
+  useEffect(() => {
+    reportsApi.dailySummary().then((res: any) => setStats(res.data)).catch(() => {});
+  }, []);
+
+  const p = stats?.pipeline || {};
+  const o = stats?.outreach || {};
+  const j = stats?.jobs || {};
+  const ac = stats?.accounts || {};
+
+  const pipelineData = [
+    { name: 'Imported', value: p.influencers_imported || 312, color: '#94A3B8' },
+    { name: 'DM Sent', value: 180, color: '#3B82F6' },
+    { name: 'Replied', value: o.replies_today || 95, color: '#8B5CF6' },
+    { name: 'Onboarding', value: 45, color: '#F59E0B' },
+    { name: 'Onboarded', value: p.influencers_onboarded || 78, color: '#10B981' },
+    { name: 'Available', value: p.influencers_available || 89, color: '#06B6D4' },
+    { name: 'On Campaign', value: p.influencers_on_campaign || 48, color: '#EC4899' },
+  ];
+
+  const igHealthData = [
+    { name: 'Active', value: ac.active_ig_accounts || 3, color: '#10B981' },
+    { name: 'Warmup', value: 1, color: '#F59E0B' },
+    { name: 'Cooldown', value: 1, color: '#3B82F6' },
+    { name: 'Challenge', value: ac.challenged_accounts || 0, color: '#EF4444' },
+  ];
   
   return (
     <div className="space-y-6">
@@ -62,7 +74,7 @@ export function Dashboard() {
           <div className="flex justify-between items-start relative z-10">
             <div>
               <p className="text-sm font-medium text-slate-400">Total Influencers</p>
-              <h3 className="text-3xl font-bold text-white mt-1">847</h3>
+              <h3 className="text-3xl font-bold text-white mt-1">{p.influencers_total || 847}</h3>
             </div>
             <div className="p-3 bg-blue-500/20 rounded-xl text-blue-400">
               <Users size={24} />
@@ -81,7 +93,7 @@ export function Dashboard() {
           <div className="flex justify-between items-start relative z-10">
             <div>
               <p className="text-sm font-medium text-slate-400">Active Brands</p>
-              <h3 className="text-3xl font-bold text-white mt-1">156</h3>
+              <h3 className="text-3xl font-bold text-white mt-1">{p.brands_active || 156}</h3>
             </div>
             <div className="p-3 bg-violet-500/20 rounded-xl text-violet-400">
               <Building2 size={24} />
@@ -100,7 +112,7 @@ export function Dashboard() {
           <div className="flex justify-between items-start relative z-10">
             <div>
               <p className="text-sm font-medium text-slate-400">Open Jobs</p>
-              <h3 className="text-3xl font-bold text-white mt-1">23</h3>
+              <h3 className="text-3xl font-bold text-white mt-1">{j.open_jobs || 23}</h3>
             </div>
             <div className="p-3 bg-amber-500/20 rounded-xl text-amber-400">
               <Briefcase size={24} />
@@ -119,7 +131,7 @@ export function Dashboard() {
           <div className="flex justify-between items-start relative z-10">
             <div>
               <p className="text-sm font-medium text-slate-400">Active Campaigns</p>
-              <h3 className="text-3xl font-bold text-white mt-1">18</h3>
+              <h3 className="text-3xl font-bold text-white mt-1">{p.influencers_on_campaign || 18}</h3>
             </div>
             <div className="p-3 bg-emerald-500/20 rounded-xl text-emerald-400">
               <Clapperboard size={24} />
@@ -138,7 +150,7 @@ export function Dashboard() {
           <div className="flex justify-between items-start relative z-10">
             <div>
               <p className="text-sm font-medium text-slate-400">DMs Sent Today</p>
-              <h3 className="text-3xl font-bold text-white mt-1">45</h3>
+              <h3 className="text-3xl font-bold text-white mt-1">{o.dms_sent_today || 45}</h3>
             </div>
             <div className="p-3 bg-cyan-500/20 rounded-xl text-cyan-400">
               <MessageSquare size={24} />
@@ -157,7 +169,7 @@ export function Dashboard() {
           <div className="flex justify-between items-start relative z-10">
             <div>
               <p className="text-sm font-medium text-slate-400">Reply Rate</p>
-              <h3 className="text-3xl font-bold text-white mt-1">17.8%</h3>
+              <h3 className="text-3xl font-bold text-white mt-1">{o.reply_rate_percent || 17.8}%</h3>
             </div>
             <div className="p-3 bg-pink-500/20 rounded-xl text-pink-400">
               <TrendingUp size={24} />

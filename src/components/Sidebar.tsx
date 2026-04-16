@@ -52,7 +52,7 @@ export function Sidebar({ onClose }: { onClose: () => void }) {
             K
           </div>
           <div>
-            <h1 className="font-bold text-xl tracking-tight text-white">Kobi</h1>
+            <h1 className="font-bold text-xl tracking-tight text-white">VibCollab</h1>
             <p className="text-xs text-slate-400 font-medium tracking-wide uppercase">by VibMedia</p>
           </div>
         </div>
